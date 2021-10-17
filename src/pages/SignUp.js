@@ -3,7 +3,6 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
@@ -11,9 +10,13 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
+import {Link} from "react-router-dom";
+
 import firebase from "../utils/firebase.js";
 
 const theme = createTheme();
+
+export default function SignUp() {
 
   const createUserWithEmailAndPassword = (email ,password, firstName, lastName) => {
     firebase.auth().createUserWithEmailAndPassword(email, password)
@@ -41,17 +44,16 @@ const theme = createTheme();
     };
     dbRefToProducts.child(uuid).set(user);
   }
-
-  export default function SignUp() {
-    const handleSubmit = (event) => {
-      event.preventDefault();
-      const data = new FormData(event.currentTarget);
-      createUserWithEmailAndPassword(
-        data.get('email'),
-        data.get('password'),
-        data.get('firstName'),
-        data.get('lastName')
-      );
+  
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    createUserWithEmailAndPassword(
+      data.get('email'),
+      data.get('password'),
+      data.get('firstName'),
+      data.get('lastName')
+    );
   };
 
   return(
@@ -131,9 +133,7 @@ const theme = createTheme();
             </Button>
             <Grid container justifyContent="center">
               <Grid item>
-                <Link href="#" variant="body2">
-                  Already have an account? Sign in
-                </Link>
+                <Link to="/signin"> ¿Ya tiene una cuenta? Inicie sesión </Link>
               </Grid>
             </Grid>
           </Box>

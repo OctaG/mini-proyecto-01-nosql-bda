@@ -10,11 +10,11 @@ import Button from '@mui/material/Button';
 import Home from '../pages/Home.js';
 import Faqs from '../pages/Faqs.js';
 import SignUp from '../pages/SignUp.js';
+import SignIn from '../pages/SignIn.js';
 
 import firebase from "../utils/firebase.js";
 
 import {
-  BrowserRouter as Router,
   Switch,
   Route,
   Link,
@@ -76,7 +76,7 @@ function NavigationBar() {
                   </>
                   :
                   <>
-                    <Nav.Link as={Link} to={'/signup'}>Sign Up</Nav.Link>
+                    <Nav.Link as={Link} to={'/signin'}>Iniciar sesión</Nav.Link>
                   </>
               }
             </Nav>
@@ -93,6 +93,9 @@ function NavigationBar() {
             </Route>
             <Route path="/signup">
               <SignUp/>
+            </Route>
+            <Route path="/signin">
+              <SignIn/>
             </Route>
             <Route path="/">
               <Home/>
