@@ -1,20 +1,54 @@
+import React, {useState} from 'react';
+
 import Navbar from 'react-bootstrap/navbar';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
+
+import Button from '@mui/material/Button';
+
 import Home from '../pages/Home.js';
 import Faqs from '../pages/Faqs.js';
+import SignUp from '../pages/SignUp.js';
+
+import firebase from "../utils/firebase.js";
 
 import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link
+  Link,
+  useHistory,
 } from "react-router-dom";
 
 function NavigationBar() {
+
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  const history = useHistory();
+
+  firebase.auth().onAuthStateChanged((user) => {
+    if(user) {
+      // User is signed in
+      setIsSignedIn(true);
+      history.push("/");
+    } else {
+      // User is signed out
+      setIsSignedIn(false);
+    }
+  });
+
+  const logOut = () =>{
+    firebase.auth().signOut().then(() => {
+        // Sign-out successful.
+      }).catch((error) => {
+        // An error happened.
+    });
+  }
+
+
+
   return (
-    <Router>
+    <Container>
       <Navbar collapseOnSelect sticky="top" expand="lg" bg="white" variant="light">
         <Container>
           <Navbar.Brand as={Link} to={'/'}>Home</Navbar.Brand>
@@ -22,8 +56,29 @@ function NavigationBar() {
           <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="ms-auto">
               <Nav.Link as={Link} to={'/faqs'}>¿Cómo funciona?</Nav.Link>
-              <Nav.Link as={Link} to={'/auctions'}> Subastas actuales </Nav.Link>
-              <Nav.Link as={Link} to={'/signup'}> Sign up </Nav.Link>
+              {
+                isSignedIn ?
+                  <>
+                    <Nav.Link as={Link} to={'/auctions'}>Subastas actuales </Nav.Link>
+                    <NavDropdown title="Mi perfil" id="collasible-nav-dropdown">
+                      <NavDropdown.Item as={Link} to={'/my-profile'}>Mi cuenta</NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to={'/my-auctions'}>Mis subastas</NavDropdown.Item>
+                      <NavDropdown.Divider />
+                      <NavDropdown.Item>
+                        <Button
+                        variant="contained"
+                        onClick={() => logOut()}
+                        >
+                          Log out
+                        </Button>
+                      </NavDropdown.Item>
+                    </NavDropdown>
+                  </>
+                  :
+                  <>
+                    <Nav.Link as={Link} to={'/signup'}>Sign Up</Nav.Link>
+                  </>
+              }
             </Nav>
           </Navbar.Collapse>
         </Container>
@@ -34,17 +89,17 @@ function NavigationBar() {
               <Faqs/>
             </Route>
             <Route path="/auctions">
-              // TODO: Add auctions page
+
             </Route>
             <Route path="/signup">
-              // TODO: Add signup page
+              <SignUp/>
             </Route>
             <Route path="/">
               <Home/>
             </Route>
           </Switch>
       </Container>
-    </Router>
+    </Container>
   );
 }
 
