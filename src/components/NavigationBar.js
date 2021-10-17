@@ -11,6 +11,7 @@ import Home from '../pages/Home.js';
 import Faqs from '../pages/Faqs.js';
 import SignUp from '../pages/SignUp.js';
 import SignIn from '../pages/SignIn.js';
+import UploadAuction from '../pages/UploadAuction.js'
 
 import firebase from "../utils/firebase.js";
 
@@ -34,6 +35,7 @@ function NavigationBar() {
     } else {
       // User is signed out
       setIsSignedIn(false);
+      history.push("/");
     }
   });
 
@@ -45,11 +47,9 @@ function NavigationBar() {
     });
   }
 
-
-
   return (
-    <Container>
-      <Navbar collapseOnSelect sticky="top" expand="lg" bg="white" variant="light">
+    <>
+      <Navbar collapseOnSelect sticky="top" bg="dark" variant="dark">
         <Container>
           <Navbar.Brand as={Link} to={'/'}>Home</Navbar.Brand>
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
@@ -59,7 +59,8 @@ function NavigationBar() {
               {
                 isSignedIn ?
                   <>
-                    <Nav.Link as={Link} to={'/auctions'}>Subastas actuales </Nav.Link>
+                    <Nav.Link as={Link} to={'/current-auctions'}>Subastas actuales</Nav.Link>
+                    <Nav.Link as={Link} to={'/create-auctions'}>Crear subasta</Nav.Link>
                     <NavDropdown title="Mi perfil" id="collasible-nav-dropdown">
                       <NavDropdown.Item as={Link} to={'/my-profile'}>Mi cuenta</NavDropdown.Item>
                       <NavDropdown.Item as={Link} to={'/my-auctions'}>Mis subastas</NavDropdown.Item>
@@ -88,8 +89,8 @@ function NavigationBar() {
             <Route path="/faqs">
               <Faqs/>
             </Route>
-            <Route path="/auctions">
-
+            <Route path="/create-auctions">
+              <UploadAuction/>
             </Route>
             <Route path="/signup">
               <SignUp/>
@@ -102,7 +103,7 @@ function NavigationBar() {
             </Route>
           </Switch>
       </Container>
-    </Container>
+    </>
   );
 }
 
