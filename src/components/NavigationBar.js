@@ -9,6 +9,8 @@ import Button from '@mui/material/Button';
 
 import Home from '../pages/Home.js';
 import Faqs from '../pages/Faqs.js';
+import Auctions from '../pages/Auctions.js';
+import AuctionEvent from '../pages/AuctionEvent.js';
 import SignUp from '../pages/SignUp.js';
 import SignIn from '../pages/SignIn.js';
 import UploadAuction from '../pages/UploadAuction.js'
@@ -88,6 +90,12 @@ function NavigationBar() {
         <Switch>
             <Route path="/faqs">
               <Faqs/>
+            </Route>
+            <Route path="/current-auctions">
+              <Auctions/>
+            </Route>
+            <Route path="/auction-event">
+              <AuctionEvent/>
             </Route>
             <Route path="/create-auctions">
               <UploadAuction/>
