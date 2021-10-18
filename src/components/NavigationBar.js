@@ -11,6 +11,8 @@ import Home from '../pages/Home.js';
 import Faqs from '../pages/Faqs.js';
 import Auctions from '../pages/Auctions.js';
 import AuctionEvent from '../pages/AuctionEvent.js';
+import UserAuctions from '../pages/UserAuctions.js';
+import UserItems from '../pages/UserItems.js';
 import SignUp from '../pages/SignUp.js';
 import SignIn from '../pages/SignIn.js';
 import UploadAuction from '../pages/UploadAuction.js'
@@ -66,6 +68,7 @@ function NavigationBar() {
                     <NavDropdown title="Mi perfil" id="collasible-nav-dropdown">
                       <NavDropdown.Item as={Link} to={'/my-profile'}>Mi cuenta</NavDropdown.Item>
                       <NavDropdown.Item as={Link} to={'/my-auctions'}>Mis subastas</NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to={'/my-items'}>Mis artículos</NavDropdown.Item>
                       <NavDropdown.Divider />
                       <NavDropdown.Item>
                         <Button
@@ -93,6 +96,12 @@ function NavigationBar() {
             </Route>
             <Route path="/current-auctions">
               <Auctions/>
+            </Route>
+            <Route path="/my-auctions">
+              <UserAuctions/>
+            </Route>
+            <Route path="/my-items">
+              <UserItems/>
             </Route>
             <Route path="/auction-event">
               <AuctionEvent/>

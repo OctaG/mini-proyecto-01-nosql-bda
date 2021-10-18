@@ -58,9 +58,10 @@ export default function UploadAuction() {
     });
   }
 
-  const createAuctionEventInDB = (eventDateAndTime, eventDuration, eventBidInterval, key) =>{
+  const createAuctionEventInDB = async (eventDateAndTime, eventDuration, eventBidInterval, key) =>{
     const dbRefToEvents = firebase.database().ref('Events');
     const eventCreator = firebase.auth().currentUser.uid;
+    const newRef = dbRefToEvents.push();
     const eventItemAuctioned = key;
     eventDateAndTime = eventDateAndTime.toString();
     const auctionEvent = {
@@ -70,13 +71,14 @@ export default function UploadAuction() {
       eventBidInterval,
       eventItemAuctioned,
     };
-    dbRefToEvents.push(auctionEvent);
+    dbRefToEvents.child(newRef.key).set(auctionEvent);
+    return [newRef.key, eventItemAuctioned];
   }
 
   const createAuctionItemInDB = async (itemName, itemDescription, itemInitialPrice, itemEstimatedValue) =>{
     const dbRefToItems = firebase.database().ref('Items');
-    const newRef = dbRefToItems.push();
     const itemCurrentBid = itemInitialPrice;
+    const newItemRef = dbRefToItems.push();
     const itemOwner = firebase.auth().currentUser.uid;
     const auctionItem = {
       itemOwner,
@@ -86,8 +88,17 @@ export default function UploadAuction() {
       itemEstimatedValue,
       itemCurrentBid,
     };
-    dbRefToItems.child(newRef.key).set(auctionItem);
-    return newRef.key;
+    dbRefToItems.child(newItemRef.key).set(auctionItem);
+    return newItemRef.key;
+  }
+
+  const insertAuctionInItem = (key) =>{
+    const dbRefToItems = firebase.database().ref('Items/');
+    const auctionEvent = key[0];
+    const auction = {
+      auctionEvent
+    };
+    dbRefToItems.child(key[1]).update(auction);
   }
 
   const handleNext = () => {
@@ -104,7 +115,9 @@ export default function UploadAuction() {
           data.eventDuration,
           data.eventBidInterval,
           key
-        );
+        ).then((key) =>{
+          insertAuctionInItem(key);
+        })
       });
     }
   };
