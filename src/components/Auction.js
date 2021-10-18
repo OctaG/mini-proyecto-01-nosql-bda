@@ -78,7 +78,6 @@ function Auction({event, allowDelete}) {
     const dbRefToUsers = firebase.database().ref("Users/" + event.eventCreator);
     dbRefToItems.on('value', (snapshot) =>{
        const item = snapshot.val();
-       console.log("Nombre: " + item.itemName);
        setItem(item);
     });
     dbRefToUsers.on('value', (snapshot) =>{
