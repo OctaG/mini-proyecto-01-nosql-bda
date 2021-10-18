@@ -6,6 +6,8 @@ import Box from '@mui/material/Box';
 import Bidder from '../components/Bidder.js'
 import { makeStyles } from '@mui/styles';
 import firebase from '../utils/firebase.js'
+import Typography from '@mui/material/Typography';
+import Countdown from 'react-countdown';
 
 const useStyles = makeStyles({
   form:{
@@ -27,7 +29,14 @@ function AuctionEvent(){
   const item = location.state.item;
   const [currentPrice, setCurrentPrice] = useState(0);
   const [bidList, setBidList] = useState([]);
-  const [slicer, setSlicer] = useState(0);
+
+  const [auctionEnded, setAuctionEnded] = useState(false);
+
+  const auctionStartDateAndTime = new Date(event.eventDateAndTime);
+  const auctionEndDateAndTime = new Date(auctionStartDateAndTime.getTime() + event.eventDuration * 60000);
+
+  console.log(Date.now());
+  console.log(Date.now() + (auctionEndDateAndTime - auctionStartDateAndTime))
 
   const writePriceToDB= () =>{
     const dbRefToProducts = firebase.database().ref('Items/' + event.eventItemAuctioned);
@@ -95,29 +104,47 @@ function AuctionEvent(){
     }
   }
 
+  const endAuction = () =>{
+    setAuctionEnded(true);
+  }
+
   return(
     <Box>
-      <h1>Precio actual: ${currentPrice ? currentPrice : item.itemInitialPrice}</h1>
-      <Box className={classes.form}>
-        <form noValidate autoComplete='off' onSubmit={handleSubmit}>
-          <Box className={classes.field}>
-            <TextField
-              label='Precio'
-              variant='standard'
-              fullWidth
-              required
-              onChange={(e) => setHighestBid(e.target.value)}
-            />
-          </Box>
-          <Button type='submit' variant="contained">Submit</Button>
-        </form>
-      </Box>
+      <h1>Precio {!auctionEnded ? "actual" : "final"}: ${currentPrice ? currentPrice : item.itemInitialPrice}</h1>
+      {!auctionEnded ?
+        <Box className={classes.form}>
+          <form noValidate autoComplete='off' onSubmit={handleSubmit}>
+            <Box className={classes.field}>
+              <TextField
+                label='Precio'
+                variant='standard'
+                fullWidth
+                required
+                onChange={(e) => setHighestBid(e.target.value)}
+              />
+            </Box>
+            <Button type='submit' variant="contained">Submit</Button>
+          </form>
+        </Box>
+        :
+        <Typography variant="h4">
+           La subasta ha terminado. ¡Gracias por participar!
+        </Typography>
+      }
+      <Typography variant="h2">
+         <Countdown
+          date={Date.now() + (event.eventDuration * 60000 - (Date.now() - auctionStartDateAndTime))}
+          onComplete = {() =>
+            endAuction()
+         }
+        />
+      </Typography>
+      <Box>
         {bidList ?
            bidList.map((bid, index) => <Bidder bid={bid} index={index}/>
           )
           : ""
         }
-      <Box>
       </Box>
     </Box>
   );

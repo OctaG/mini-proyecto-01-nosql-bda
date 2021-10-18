@@ -43,6 +43,21 @@ function Auction({event}) {
     setExpanded(!expanded);
   };
 
+  const goToAuction = () => {
+    const auctionStartDateAndTime = new Date(event.eventDateAndTime);
+    const auctionEndDateAndTime = new Date(auctionStartDateAndTime.getTime() + event.eventDuration * 60000);
+    console.log(auctionStartDateAndTime);
+    console.log(auctionEndDateAndTime);
+    if(new Date() < auctionStartDateAndTime || new Date() > auctionEndDateAndTime ){
+      console.log("Aun no puede acceder");
+    }else{
+      history.push({
+       pathname: '/auction-event',
+       state: { item: item, event: event }
+      });
+    }
+  }
+
   useEffect(()=>{
     const dbRefToItems = firebase.database().ref("Items/" + event.eventItemAuctioned);
     const dbRefToUsers = firebase.database().ref("Users/" + event.eventCreator);
@@ -56,7 +71,6 @@ function Auction({event}) {
        console.log(creator);
     });
   }, []);
-  console.log(item);
  return (
    <Card sx={{ maxWidth: 345 }}>
      <CardHeader
@@ -85,10 +99,7 @@ function Auction({event}) {
        <Button
          variant="contained"
          onClick={() =>
-           history.push({
-            pathname: '/auction-event',
-            state: { item: item, event: event }
-          })
+           goToAuction()
         }
          >
          Ingresar
