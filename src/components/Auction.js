@@ -69,8 +69,10 @@ function Auction({event, allowDelete}) {
     const auctionEndDateAndTime = new Date(auctionStartDateAndTime.getTime() + event.eventDuration * 60000);
     console.log(auctionStartDateAndTime);
     console.log(auctionEndDateAndTime);
-    if(new Date() < auctionStartDateAndTime || new Date() > auctionEndDateAndTime ){
-      console.log("Aun no puede acceder");
+    if(new Date() < auctionStartDateAndTime){
+      alert("No es posible acceder a una subasta que aún no comienza.")
+    }else if (new Date() > auctionEndDateAndTime ){
+      alert("No es posible acceder a una subasta que ha finalizado.")
     }else{
       history.push({
        pathname: '/auction-event',

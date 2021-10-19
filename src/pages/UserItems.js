@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 
 import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 
 import Item from '../components/Item.js'
 
@@ -28,17 +29,19 @@ function UserItems(){
   }, []);
 
   return (
-    <div>
-      <div>
-        <Typography variant="h3">Mis artículos</Typography>
-      </div>
-      <div>
+    <Box sx={{ marginTop: 5}}>
+      <Box>
+        <Typography sx={{fontWeight: "bold"}} align='center' gutterBottom variant="h1" >
+          Mis artículos
+        </Typography>
+      </Box>
+      <Box>
         {itemsData
           ? itemsData.map((itemData, index) => <Item item={itemData} index={index}/>)
           : ""
         }
-      </div>
-    </div>
+      </Box>
+    </Box>
   )
 }
 

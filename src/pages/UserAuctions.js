@@ -1,6 +1,9 @@
 import React, {useEffect, useState} from "react";
-import Auction from '../components/Auction.js';
+
 import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+
+import Auction from '../components/Auction.js';
 
 import firebase from '../utils/firebase.js';
 
@@ -26,17 +29,19 @@ function UserAuctions() {
   }, []);
 
   return(
-    <div>
-      <div>
-        <Typography variant="h3">Mis subastas</Typography>
-      </div>
-      <div>
+    <Box sx={{ marginTop: 5}}>
+      <Box>
+        <Typography sx={{fontWeight: "bold"}} align='center' gutterBottom variant="h1" >
+          Mis subastas
+        </Typography>
+      </Box>
+      <Box>
         {eventsData
           ? eventsData.map((eventData, index) => <Auction event={eventData} index={index} allowDelete/>)
           : ""
         }
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }
 
