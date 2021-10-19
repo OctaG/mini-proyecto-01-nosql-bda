@@ -104,7 +104,7 @@ export default function UploadAuction(){
 
   const createAuctionItemInDB = async (itemName, itemDescription, itemInitialPrice, itemEstimatedValue) =>{
     const dbRefToItems = firebase.database().ref('Items');
-    const itemCurrentBid = itemInitialPrice;
+    const highestBid = itemInitialPrice;
     const newItemRef = dbRefToItems.push();
     const itemOwner = firebase.auth().currentUser.uid;
     const auctionItem = {
@@ -113,7 +113,7 @@ export default function UploadAuction(){
       itemDescription,
       itemInitialPrice,
       itemEstimatedValue,
-      itemCurrentBid,
+      highestBid,
     };
     dbRefToItems.child(newItemRef.key).set(auctionItem);
     return newItemRef.key;

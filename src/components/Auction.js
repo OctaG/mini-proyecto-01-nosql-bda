@@ -96,7 +96,7 @@ function Auction({event, allowDelete}) {
  return(
    <div>
      {!deleted ?
-       <Card sx={{ maxWidth: "40%", marginBottom: 5, marginLeft:"30%", marginRight:"30%", borderRadius:1}}>
+       <Card sx={{ maxWidth: "50%", marginBottom: 5, marginLeft:"25%", marginRight:"25%", borderRadius:1}}>
          <CardHeader
            title=
            <Typography sx={{fontWeight: "bold"}} gutterBottom align='center' variant="h5">
