@@ -18,9 +18,9 @@ function Auctions(){
 
   const [eventsData, setEventsData] = useState([]);
   const [itemsData, setItemsData] = useState([]);
-  const [queryUpcoming, setQueryUpcoming] = useState(false);
-  const [queryPast, setQueryPast] = useState(false);
-  const [queryLive, setQueryLive] = useState(false);
+  const [disableQueryUpcoming, setdisableQueryUpcoming] = useState(false);
+  const [disableQueryPast, setDisableQueryPast] = useState(false);
+  const [disableQueryLive, setDisableQueryLive] = useState(false);
 
   useEffect(()=>{
     showAllAuctions();
@@ -41,8 +41,9 @@ function Auctions(){
 
   const showUpcomingAuctions = (e) => {
     const dbRefToEvents = firebase.database().ref("Events");
-    setQueryUpcoming(e.target.checked);
-    if(e.target.checked && (!queryPast || !queryLive)){
+    setDisableQueryPast(e.target.checked);
+    setDisableQueryLive(e.target.checked);
+    if(e.target.checked){
       dbRefToEvents.on('value', (snapshot) =>{
         const eventList = [];
         const events = snapshot.val();
@@ -60,8 +61,9 @@ function Auctions(){
 
   const showPastAuctions = (e) => {
     const dbRefToEvents = firebase.database().ref("Events");
-    setQueryPast(e.target.checked);
-    if(e.target.checked && (!queryUpcoming || !queryLive)){
+    setdisableQueryUpcoming(e.target.checked);
+    setDisableQueryLive(e.target.checked);
+    if(e.target.checked){
       dbRefToEvents.on('value', (snapshot) =>{
         const eventList = [];
         const events = snapshot.val();
@@ -80,8 +82,9 @@ function Auctions(){
 
   const showLiveAuctions = (e) => {
     const dbRefToEvents = firebase.database().ref("Events");
-    setQueryLive(e.target.checked);
-    if(e.target.checked && (!queryUpcoming || !queryPast)){
+    setdisableQueryUpcoming(e.target.checked);
+    setDisableQueryPast(e.target.checked);
+    if(e.target.checked){
       dbRefToEvents.on('value', (snapshot) =>{
         const eventList = [];
         const events = snapshot.val();
@@ -113,19 +116,19 @@ function Auctions(){
           <FormGroup row>
             <FormControlLabel
               control={
-                <Checkbox onChange={e => showUpcomingAuctions(e)}/>
+                <Checkbox onChange={e => showUpcomingAuctions(e)} disabled={disableQueryUpcoming}/>
               }
               label="Mostrar próximas subastas"
             />
             <FormControlLabel
               control={
-                <Checkbox onChange={e => showPastAuctions(e)}/>
+                <Checkbox onChange={e => showPastAuctions(e)} disabled={disableQueryPast}/>
               }
               label="Mostrar subastas pasadas"
             />
             <FormControlLabel
               control={
-                <Checkbox onChange={e => showLiveAuctions(e)}/>
+                <Checkbox onChange={e => showLiveAuctions(e)} disabled={disableQueryLive}/>
               }
               label="Mostrar subastas en vivo"
             />
