@@ -65,11 +65,17 @@ function Auction({event, allowDelete}) {
   };
 
   const goToAuction = () => {
+    const user = firebase.auth().currentUser
+    user ? console.log("Yes") : console.log("No");;
     const auctionStartDateAndTime = new Date(event.eventDateAndTime);
     const auctionEndDateAndTime = new Date(auctionStartDateAndTime.getTime() + event.eventDuration * 60000);
     console.log(auctionStartDateAndTime);
     console.log(auctionEndDateAndTime);
-    if(new Date() < auctionStartDateAndTime){
+    if(!user){
+      history.push({
+       pathname: '/signin',
+      });
+    }else if(new Date() < auctionStartDateAndTime){
       alert("No es posible acceder a una subasta que aún no comienza.")
     }else if (new Date() > auctionEndDateAndTime ){
       alert("No es posible acceder a una subasta que ha finalizado.")
@@ -106,12 +112,6 @@ function Auction({event, allowDelete}) {
            <Typography sx={{fontWeight: "lighter"}} gutterBottom align='center' variant="h6">
               {event.eventDateAndTime}
            </Typography>
-         />
-         <CardMedia
-           component="img"
-           height="250"
-           image="/static/images/cards/paella.jpg"
-           alt="Paella dish"
          />
          <CardContent>
            <Typography sx={{fontWeight: "lighter"}} align='left'>

@@ -7,7 +7,6 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 
 import Button from '@mui/material/Button';
 
-import Home from '../pages/Home.js';
 import Faqs from '../pages/Faqs.js';
 import Auctions from '../pages/Auctions.js';
 import AuctionEvent from '../pages/AuctionEvent.js';
@@ -66,7 +65,6 @@ function NavigationBar() {
                     <Nav.Link as={Link} to={'/current-auctions'}>Subastas actuales</Nav.Link>
                     <Nav.Link as={Link} to={'/create-auctions'}>Crear subasta</Nav.Link>
                     <NavDropdown title="Mi perfil" id="collasible-nav-dropdown">
-                      <NavDropdown.Item as={Link} to={'/my-profile'}>Mi cuenta</NavDropdown.Item>
                       <NavDropdown.Item as={Link} to={'/my-auctions'}>Mis subastas</NavDropdown.Item>
                       <NavDropdown.Item as={Link} to={'/my-items'}>Mis artículos</NavDropdown.Item>
                       <NavDropdown.Divider />
@@ -116,7 +114,7 @@ function NavigationBar() {
               <SignIn/>
             </Route>
             <Route path="/">
-              <Home/>
+              <Auctions/>
             </Route>
           </Switch>
       </Container>

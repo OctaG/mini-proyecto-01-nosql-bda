@@ -15,12 +15,6 @@ function Auction({item}) {
   console.log(item);
   return (
      <Card sx={{ maxWidth: "40%", marginBottom: 5, marginLeft:"30%", marginRight:"30%", borderRadius:1}}>
-       <CardMedia
-         component="img"
-         height="140"
-         image="/static/images/cards/contemplative-reptile.jpg"
-         alt="green iguana"
-       />
        <CardContent>
          <Typography gutterBottom variant="h5" component="div">
            {item.itemName}
