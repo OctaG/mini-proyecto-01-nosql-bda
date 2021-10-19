@@ -1,4 +1,5 @@
-import * as React from 'react';
+import React, {useState, useEffect} from 'react';
+
 import CssBaseline from '@mui/material/CssBaseline';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -19,22 +20,49 @@ import Review from '../components/Review';
 
 import firebase from "../utils/firebase.js";
 
-const steps = ['Detalles del artículo', 'Detalles del evento', 'Revisión'];
-const theme = createTheme();
+export default function UploadAuction(){
 
-export default function UploadAuction() {
+  const theme = createTheme();
 
-  const [data, setData] = React.useState({
+  const [activeStep, setActiveStep] = useState(0);
+  const steps = ['Detalles del artículo', 'Detalles del evento', 'Revisión'];
+
+  const [data, setData] = useState({
     itemName: '',
     itemDescription: '',
     itemInitialPrice: 0,
     itemEstimatedValue: 0,
     eventDateAndTime: new Date(),
     eventDuration: 5,
-    eventBidInterval: 0,
   });
 
-  const [activeStep, setActiveStep] = React.useState(0);
+  const [nameFieldError, setNameFieldError] = useState(false);
+  const [descriptionFieldError, setDescriptionFieldError] = useState(false);
+  const [initialPriceFieldError, setInitialPriceFieldError] = useState(false);
+  const [estimatedValueFieldError, setEstimatedValueFieldError] = useState(false);
+
+  useEffect(()=>{
+    if(data.itemName == ''){
+      setNameFieldError(true);
+    }else{
+      setNameFieldError(false);
+    }
+    if(data.itemDescription == ''){
+      setDescriptionFieldError(true);
+    }else{
+      setDescriptionFieldError(false);
+    }
+    if(data.itemInitialPrice == '' || data.itemInitialPrice < 0){
+      setInitialPriceFieldError(true);
+    }else{
+      setInitialPriceFieldError(false);
+    }
+    if(data.itemEstimatedValue == '' || data.itemEstimatedValue < 0){
+      setEstimatedValueFieldError(true);
+    }else{
+      setEstimatedValueFieldError(false);
+    }
+  }, [data]);
 
   function getStepContent(step) {
     switch (step) {
@@ -58,7 +86,7 @@ export default function UploadAuction() {
     });
   }
 
-  const createAuctionEventInDB = async (eventDateAndTime, eventDuration, eventBidInterval, key) =>{
+  const createAuctionEventInDB = async (eventDateAndTime, eventDuration, key) =>{
     const dbRefToEvents = firebase.database().ref('Events');
     const eventCreator = firebase.auth().currentUser.uid;
     const newRef = dbRefToEvents.push();
@@ -68,7 +96,6 @@ export default function UploadAuction() {
       eventCreator,
       eventDateAndTime,
       eventDuration,
-      eventBidInterval,
       eventItemAuctioned,
     };
     dbRefToEvents.child(newRef.key).set(auctionEvent);
@@ -92,7 +119,7 @@ export default function UploadAuction() {
     return newItemRef.key;
   }
 
-  const insertAuctionInItem = (key) =>{
+  const insertAuctionInItem = async (key) =>{
     const dbRefToItems = firebase.database().ref('Items/');
     const auctionEvent = key[0];
     const auction = {
@@ -102,23 +129,35 @@ export default function UploadAuction() {
   }
 
   const handleNext = () => {
-    setActiveStep(activeStep + 1);
+    console.log(nameFieldError);
+    console.log(descriptionFieldError);
+    console.log(initialPriceFieldError);
+    console.log(estimatedValueFieldError);
+    if(activeStep !== steps.length -1){
+      setActiveStep(activeStep + 1);
+    }
     if(activeStep === 2){
-      createAuctionItemInDB(
-        data.itemName,
-        data.itemDescription,
-        data.itemInitialPrice,
-        data.itemEstimatedValue
-      ).then((key) => {
-        createAuctionEventInDB(
-          data.eventDateAndTime,
-          data.eventDuration,
-          data.eventBidInterval,
-          key
-        ).then((key) =>{
-          insertAuctionInItem(key);
+      if(
+        !nameFieldError && !descriptionFieldError && !initialPriceFieldError
+        && !estimatedValueFieldError
+      ){
+        createAuctionItemInDB(
+          data.itemName,
+          data.itemDescription,
+          data.itemInitialPrice,
+          data.itemEstimatedValue
+        ).then((key) => {
+          createAuctionEventInDB(
+            data.eventDateAndTime,
+            data.eventDuration,
+            key
+          ).then((key) =>{
+            insertAuctionInItem(key);
+          }).then(() => {
+            setActiveStep(activeStep + 1);
+          });
         })
-      });
+      }
     }
   };
 
@@ -126,13 +165,18 @@ export default function UploadAuction() {
     setActiveStep(activeStep - 1);
   };
 
-  return (
+  return(
     <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
-        <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
-          <Typography component="h1" variant="h4" align="center">
-            Crear subasta
+      <Container component="main" maxWidth="sm" sx={{ mb: 4, marginTop:5 }}>
+        <Box>
+          <Typography sx={{fontWeight: "bold"}} align='center' variant="h1" >
+            Mi subasta
           </Typography>
+        </Box>
+        <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
+         <Typography sx={{fontWeight: "lighter"}} gutterBottom align='center' variant="h4">
+            Crear una subasta
+         </Typography>
           <Stepper activeStep={activeStep} alternativeLabel sx={{ pt: 3, pb: 5 }}>
             {steps.map((label) => (
               <Step key={label}>
@@ -144,7 +188,7 @@ export default function UploadAuction() {
             {activeStep === steps.length ? (
               <React.Fragment>
                 <Typography variant="h5" gutterBottom>
-                  Thank you for your order.
+                  Gracias por subastar un artículo con nosotros.
                 </Typography>
                 <Typography variant="subtitle1">
                   {'Su evento de subasta para ' + data.itemName +
@@ -162,7 +206,6 @@ export default function UploadAuction() {
                       Back
                     </Button>
                   )}
-
                   <Button
                     variant="contained"
                     onClick={handleNext}

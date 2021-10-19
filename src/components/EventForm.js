@@ -10,7 +10,6 @@ import DateTimePicker from '@mui/lab/DateTimePicker';
 import MenuItem from  '@mui/material/MenuItem';
 
 export default function EventForm({data, update}) {
-  console.log(data);
   const [value, setValue] = React.useState(new Date());
   const [duration, setDuration] = React.useState(5);
   const durations = [
@@ -35,53 +34,41 @@ export default function EventForm({data, update}) {
 const handleChange = (event) => {
    update("eventDuration", event.target.value);
  };
-  return (
+
+  return(
     <React.Fragment>
-      <Typography variant="h6" gutterBottom>
+      <Typography sx={{fontWeight: "700", marginBottom: 3}} variant="h6">
         Detalles de la subasta
       </Typography>
-      <Grid container>
-        <Grid item xs={12}>
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <DateTimePicker
-              label="Fecha y hora"
-              renderInput={(props) => <TextField {...props} />}
-              value={data.eventDateAndTime}
-              variant="standard"
-              onChange={(newValue) => {
-                update("eventDateAndTime", newValue)
-              }}
-            />
-          </LocalizationProvider>
-        </Grid>
-        <Grid container>
-          <TextField
-             id="eventDuration"
-             select
-             label="Duración"
-             value={data.eventDuration}
-             onChange={handleChange}
-             helperText="Seleccione la duración de la subasta"
-             variant="standard"
-           >
-             {durations.map((option) => (
-               <MenuItem key={option.value} value={option.value}>
-                 {option.label}
-               </MenuItem>
-             ))}
-          </TextField>
-        </Grid>
-        <TextField
-          onChange={e => update("eventBidInterval", e.target.value)}
-          id="eventBidInterval"
-          label="Incremento de la oferta"
-          type="number"
-          InputLabelProps={{
-           shrink: true,
-          }}
+      <Grid sx={{marginBottom: 3}} >
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <DateTimePicker
+            renderInput={(props) => <TextField {...props} />}
+            value={data.eventDateAndTime}
+            variant="standard"
+            onChange={(newValue) => {
+              update("eventDateAndTime", newValue)
+            }}
+          />
+        </LocalizationProvider>
+     </Grid>
+     <Grid>
+       <TextField
+          id="eventDuration"
+          select
+          label="Duración"
+          value={data.eventDuration}
+          onChange={handleChange}
+          helperText="Seleccione la duración de la subasta"
           variant="standard"
-       />
-      </Grid>
+        >
+          {durations.map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+              {option.label}
+            </MenuItem>
+          ))}
+       </TextField>
+     </Grid>
     </React.Fragment>
   );
 }

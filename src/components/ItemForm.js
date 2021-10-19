@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useState} from 'react';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
@@ -7,16 +7,16 @@ import Checkbox from '@mui/material/Checkbox';
 import InputAdornment from '@mui/material/InputAdornment';
 
 export default function ItemForm({data, update}) {
-  console.log(data);
-  return (
+
+  return(
     <React.Fragment>
-      <Typography variant="h6" gutterBottom>
+      <Typography sx={{fontWeight: "700", marginBottom: 2}} variant="h6">
         Detalles del artículo
       </Typography>
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <TextField
-            onChange={e => update("itemName", e.target.value)}
+            onChange={e => update('itemName', e.target.value)}
             required
             id="itemName"
             name="itemName"
@@ -32,7 +32,7 @@ export default function ItemForm({data, update}) {
             required
             id="itemDescription"
             name="itemDescription"
-            label="Descipción"
+            label="Descripción"
             multiline
             fullWidth
             variant="standard"
@@ -43,9 +43,10 @@ export default function ItemForm({data, update}) {
           <TextField
             onChange={e => update("itemInitialPrice", e.target.value)}
             required
+            type="number"
             id="itemInitialPrice"
             name="itemInitialPrice"
-            label="Precio inicial"
+            label="Oferta inicial"
             fullWidth
             variant="standard"
             defaultValue={data.itemInitialPrice}
@@ -57,6 +58,8 @@ export default function ItemForm({data, update}) {
         <Grid item xs={12} sm={6}>
           <TextField
             onChange={e => update("itemEstimatedValue", e.target.value)}
+            required
+            type="number"
             id="itemEstimatedValue"
             name="itemEstimatedValue"
             label="Valor estimado"
