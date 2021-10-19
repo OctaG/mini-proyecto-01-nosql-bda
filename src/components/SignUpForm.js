@@ -123,13 +123,13 @@ export default function SignUpForm(){
             alignItems: 'center',
           }}
         >
-          <Avatar sx={{width:80, height:80, m:3, bgcolor: '#1575eb' }}>
+          <Avatar sx={{width:80, height:80, m:3, bgcolor: 'primary.main'}}>
             <PersonAddIcon fontSize="large" />
           </Avatar>
           <Typography component="h1" variant="h2">
             Crear una cuenta
           </Typography>
-          <Typography component="h2" variant="h6" sx={{marginTop:4, justifyContent:'center'}}>
+          <Typography component="h2" variant="h6" sx={{marginTop:2, justifyContent:'center'}}>
             {firebaseErrorMessage}
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
@@ -194,7 +194,7 @@ export default function SignUpForm(){
                   required
                   fullWidth
                   name="password"
-                  label="Password"
+                  label="Contraseña"
                   type="password"
                   id="password"
                   autoComplete="new-password"
@@ -214,7 +214,7 @@ export default function SignUpForm(){
               color="secondary"
               sx={{ mt: 3, mb: 2}}
             >
-              Sign Up
+              Crear cuenta
             </Button>
             <Grid container justifyContent="center">
               <Grid item>
