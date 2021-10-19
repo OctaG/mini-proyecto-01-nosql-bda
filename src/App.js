@@ -1,5 +1,4 @@
 import NavigationBar from './components/NavigationBar.js';
-import './App.css';
 
 import {BrowserRouter as Router} from "react-router-dom";
 

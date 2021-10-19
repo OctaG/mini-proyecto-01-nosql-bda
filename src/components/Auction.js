@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from "react";
+
 import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
+import Box from '@mui/material/Box';
 import CardHeader from '@mui/material/CardHeader';
 import Button from '@mui/material/Button';
 import CardMedia from '@mui/material/CardMedia';
@@ -20,29 +22,45 @@ import firebase from '../utils/firebase.js';
 
 import {useHistory} from "react-router-dom";
 
-const ExpandMore = styled((props) => {
-  const { expand, ...other } = props;
-  return <IconButton {...other} />;
-  })(({ theme, expand }) => ({
-    transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
-    marginLeft: 'auto',
-    transition: theme.transitions.create('transform', {
-      duration: theme.transitions.duration.shortest,
-    }),
-}));
-
 function Auction({event, allowDelete}) {
 
-  console.log('Event: ' + event.eventItemAuctioned);
-
   const [expanded, setExpanded] = useState(false);
+  const [buttonText, setButtonText] = useState("Ver más información");
   const [item, setItem] = useState();
   const [creator, setCreator] = useState();
   const [deleted, setDeleted] = useState(false);
 
   const history = useHistory();
 
+  useEffect(()=>{
+    const dbRefToItems = firebase.database().ref("Items/" + event.eventItemAuctioned);
+    const dbRefToUsers = firebase.database().ref("Users/" + event.eventCreator);
+    dbRefToItems.on('value', (snapshot) =>{
+       const item = snapshot.val();
+       setItem(item);
+    });
+    dbRefToUsers.on('value', (snapshot) =>{
+       const creator = snapshot.val();
+       setCreator(creator);
+       console.log(creator);
+    });
+  }, [event]);
+
+  const ExpandMore = styled((props) => {
+    const { expand, ...other } = props;
+    return <IconButton {...other} />;
+    })(({ theme, expand }) => ({
+      transition: theme.transitions.create('transform', {
+        duration: theme.transitions.duration.shortest,
+      }),
+  }));
+
   const handleExpandClick = () => {
+    if(!expanded){
+      setButtonText("Ver menos información");
+    }else{
+      setButtonText("Ver más información");
+    }
     setExpanded(!expanded);
   };
 
@@ -73,111 +91,113 @@ function Auction({event, allowDelete}) {
     }
   }
 
-  useEffect(()=>{
-    const dbRefToItems = firebase.database().ref("Items/" + event.eventItemAuctioned);
-    const dbRefToUsers = firebase.database().ref("Users/" + event.eventCreator);
-    dbRefToItems.on('value', (snapshot) =>{
-       const item = snapshot.val();
-       setItem(item);
-    });
-    dbRefToUsers.on('value', (snapshot) =>{
-       const creator = snapshot.val();
-       setCreator(creator);
-       console.log(creator);
-    });
-  }, [event]);
  return(
    <div>
      {!deleted ?
-       <Card sx={{ maxWidth: 345 }}>
+       <Card sx={{ maxWidth: "40%", marginBottom: 5, marginLeft:"30%", marginRight:"30%", borderRadius:1}}>
          <CardHeader
-           title={item ? item.itemName : ""}
-           subheader={event.eventDateAndTime}
+           title=
+           <Typography sx={{fontWeight: "bold"}} gutterBottom align='center' variant="h5">
+             {item ? item.itemName : ""}
+           </Typography>
+           subheader=
+           <Typography sx={{fontWeight: "lighter"}} gutterBottom align='center' variant="h6">
+              {event.eventDateAndTime}
+           </Typography>
          />
          <CardMedia
            component="img"
-           height="194"
+           height="250"
            image="/static/images/cards/paella.jpg"
            alt="Paella dish"
          />
          <CardContent>
-           <Typography variant="body2" color="text.secondary">
+           <Typography sx={{fontWeight: "lighter"}} align='left'>
               {creator && item ?
-                  creator.firstName + " " + creator.lastName + " subasta: '" +
-                  item.itemName + "' con un precio inicial de $" +  item.itemInitialPrice +
-                  ". El evento de subasta ocurrirá el " + event.eventDateAndTime +
-                  ". "
-                  :
-                  ""
+                creator.firstName + " " + creator.lastName + " subasta: '" +
+                item.itemName + "' con un precio inicial de $" +  item.itemInitialPrice +
+                ". El evento de subasta ocurrirá el " + event.eventDateAndTime +
+                ". "
+                :
+                ""
               }
            </Typography>
          </CardContent>
-         <CardActions>
-          {allowDelete ?
-            <Button
-              variant="contained"
-              onClick={() =>
-                deleteAuction()
-             }
-              >
-              Delete
-            </Button>
-            :
-            <Button
-              variant="contained"
-              onClick={() =>
-                goToAuction()
-             }
-              >
-              Ingresar
-            </Button>
-          }
+         <CardActions sx={{ justifyContent: 'flex-end' }}>
            <ExpandMore
              expand={expanded}
              onClick={handleExpandClick}
              aria-expanded={expanded}
              aria-label="show more"
            >
-            <ExpandMoreIcon />
+             <Button variant="outlined">{buttonText}</Button>
            </ExpandMore>
+           {allowDelete ?
+             <Button
+               variant="contained"
+               onClick={() =>
+                 deleteAuction()
+              }
+               >
+               Delete
+             </Button>
+             :
+             <Button
+               variant="contained"
+               onClick={() =>
+                 goToAuction()
+              }
+               >
+               Ingresar
+             </Button>
+           }
          </CardActions>
          <Collapse in={expanded} timeout="auto" unmountOnExit>
            <CardContent>
-             <Typography variant="h5">Detalles de la subasta: </Typography>
-             { creator && item ?
-                 <div>
-                    <Typography paragraph>
-                      Vendedor
-                      {": " + creator.firstName + " " + creator.lastName}
-                    </Typography>
-                    <Typography paragraph>
-                      Artículo
-                      {": " + item.itemName}
-                    </Typography>
-                    <Typography paragraph>
-                      Descripción
-                      {": " + item.itemDescription}
-                    </Typography>
-                    <Typography paragraph>
-                      Valor estimado del artículo
-                      {": $" + item.itemEstimatedValue}
-                    </Typography>
-                    <Typography paragraph>
-                      Oferta inicial
-                      {": $" + item.itemInitialPrice}
-                    </Typography>
-                    <Typography paragraph>
-                      Duración de la subasta
-                      {": " + event.eventDuration + " minutos"}
-                    </Typography>
-                    <Typography paragraph>
-                      Incrementos de la oferta
-                      {": $" + event.eventBidInterval}
-                    </Typography>
-                 </div>
+             <Typography sx={{fontWeight: "bolder"}} gutterBottom align='center' paragraph>
+              Detalles de la subasta
+             </Typography>
+             {creator && item ?
+               <Box>
+                 <Typography sx={{fontWeight: 500, marginBottom: 0.5}} align='center' paragraph>
+                   Vendedor
+                 </Typography>
+                  <Typography sx={{fontWeight: 100, marginBottom: 2}} gutterBottom align='center' paragraph >
+                    {creator.firstName + " " + creator.lastName}
+                  </Typography>
+                  <Typography sx={{fontWeight: 500, marginBottom: 0.5}} align='center' paragraph>
+                      Artículo en subasta
+                  </Typography>
+                  <Typography sx={{fontWeight: 100, marginBottom: 2}} gutterBottom align='center' paragraph>
+                    {item.itemName}
+                  </Typography>
+                  <Typography sx={{fontWeight: 500, marginBottom: 0.5}} align='center' paragraph>
+                    Descripción del artículo
+                  </Typography>
+                  <Typography sx={{fontWeight: 100, marginBottom: 2}} gutterBottom align='center' paragraph >
+                    {item.itemDescription}
+                  </Typography>
+                  <Typography sx={{fontWeight: 500, marginBottom: 0.5}} align='center' paragraph>
+                    Valor estimado del artículo
+                  </Typography>
+                  <Typography sx={{fontWeight: 100, marginBottom: 2}} gutterBottom align='center' paragraph >
+                    ${item.itemEstimatedValue}
+                  </Typography>
+                  <Typography sx={{fontWeight: 500, marginBottom: 0.5}} align='center' paragraph>
+                    Precio inicial de subasta
+                  </Typography>
+                  <Typography sx={{fontWeight: 100, marginBottom: 2}} gutterBottom align='center' paragraph >
+                    ${item.itemInitialPrice}
+                  </Typography>
+                  <Typography sx={{fontWeight: 500, marginBottom: 0.5}} align='center' paragraph>
+                    Duración de la subasta
+                  </Typography>
+                  <Typography sx={{fontWeight: 100, marginBottom: 2}} gutterBottom align='center' paragraph >
+                    {event.eventDuration} minutos
+                  </Typography>
+                </Box>
                 :
                   ""
-
              }
              <Typography paragraph>
              </Typography>
